@@ -1,42 +1,52 @@
-mochila = {'elemento': ['linterna','cantiplora','alfajor'], 'peso': [2, 2, 2], 'valor': [2,2,3]}
+def encontrarMejorSolucion(n, k, v):
+    def inicializarC(n):
+        return [0] * n
 
-def inicializarTupla(n):
-  tupla = [0] * n
-  return tupla
+    def incrementarC(C):
+        pos = n - 1
+        while pos >= 0:
+            if C[pos] == 1:
+                C[pos] = 0
+                pos -= 1
+            else:
+                C[pos] = 1
+                break
+        if pos == -1:
+            return 'fin'
+        return C
 
-def incrementarTupla(tupla):
-  if tupla == [1,1,1]:
-        return 'fin'
-  pos = len(tupla) - 1
-  while tupla[pos] == 1 and pos > 0:
-    tupla[pos] = 0
-    pos -= 1
-  if pos == -1:
-    return 'fin'
-  tupla[pos] = 1
-  return tupla
+    def esFactibleC(C):
+        pesoNecesario = 0
+        for i in range(n):
+            pesoNecesario += C[i] * k[i]
+        return pesoNecesario <= K
 
-def esFactibleTupla(tupla):
-  pesoNecesario = 0
-  for i in range(len(tupla) - 1):
-    pesoNecesario += tupla[i] * mochila['peso'][i]
-  return pesoNecesario
+    def gananciaC(C):
+        valorTotal = 0
+        for i in range(n):
+            valorTotal += C[i] * v[i]
+        return valorTotal
 
-def gananciaTupla(tupla):
-  valorTotal = 0
-  for i in range(len(tupla)):
-    valorTotal += tupla[i] * mochila['valor'][i]
-  return valorTotal
+    K = 4  # Peso máximo permitido
+    C = inicializarC(n)
+    maximaGanancia = 0
+    solucionMaxima = C
 
-c = inicializarTupla(3)
-maximaGanancia = 0
-solucionMaxima = c
+    while incrementarC(C) != 'fin':
+        if esFactibleC(C):
+            ganancia_actual = gananciaC(C)
+            if ganancia_actual > maximaGanancia:
+                maximaGanancia = ganancia_actual
+                solucionMaxima = C
 
-while incrementarTupla(c) != 'fin':
-  if esFactibleTupla(c) and gananciaTupla(c) > maximaGanancia:
-    maximaGanancia = gananciaTupla(c)
-    solucionMaxima = c
+    return solucionMaxima, maximaGanancia
 
-print(solucionMaxima)
-print(esFactibleTupla(solucionMaxima))
-print(maximaGanancia)
+# Ejemplo de uso
+n = 4  # Número de elementos
+k = [2, 2, 2, 1]  # Pesos de los elementos
+v = [2, 2, 3, 2]  # Valores de los elementos
+
+solucion, max_ganancia = encontrarMejorSolucion(n, k, v)
+print("Mejor solución:", solucion)
+print("Es factible:", solucion)
+print("Máxima ganancia:", max_ganancia)
