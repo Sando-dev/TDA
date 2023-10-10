@@ -1,52 +1,58 @@
-def encontrarMejorSolucion(n, k, v):
-    def inicializarC(n):
-        return [0] * n
+mochila = {
+    'elemento': ['linterna', 'cantimplora', 'alfajor', 'cuchillo'],
+    'peso': [2, 2, 2, 1],
+    'valor': [2, 2, 3, 2]
+}
 
-    def incrementarC(C):
-        pos = n - 1
-        while pos >= 0:
-            if C[pos] == 1:
-                C[pos] = 0
-                pos -= 1
-            else:
-                C[pos] = 1
-                break
-        if pos == -1:
-            return 'fin'
-        return C
+def pesoTupla(tupla):
+    peso = 0
+    for i in range(len(tupla)):
+        peso += tupla[i] * mochila['peso'][i]
+    return peso
 
-    def esFactibleC(C):
-        pesoNecesario = 0
-        for i in range(n):
-            pesoNecesario += C[i] * k[i]
-        return pesoNecesario <= K
+def inicializarTupla(n):
+    tupla = [0] * n
+    return tupla
 
-    def gananciaC(C):
-        valorTotal = 0
-        for i in range(n):
-            valorTotal += C[i] * v[i]
-        return valorTotal
+def incrementarTupla(tupla):
+    if tupla == [1] * len(tupla):
+        return 'fin'
+    pos = len(tupla) - 1
+    while pos >= 0:
+        if tupla[pos] == 1:
+            tupla[pos] = 0
+            pos -= 1
+        else:
+            tupla[pos] = 1
+            break
+    return tupla
 
-    K = 4  # Peso máximo permitido
-    C = inicializarC(n)
+def esFactibleTupla(tupla):
+    pesoNecesario = pesoTupla(tupla)
+    return pesoNecesario <= 4
+
+def gananciaTupla(tupla):
+    valorTotal = 0
+    for i in range(len(tupla)):
+        valorTotal += tupla[i] * mochila['valor'][i]
+    return valorTotal
+
+def encuentraMejorSolucion():
+    n = len(mochila['elemento'])
+    c = inicializarTupla(n)
     maximaGanancia = 0
-    solucionMaxima = C
+    solucionMaxima = c
 
-    while incrementarC(C) != 'fin':
-        if esFactibleC(C):
-            ganancia_actual = gananciaC(C)
+    while incrementarTupla(c) != 'fin':
+        if esFactibleTupla(c):
+            ganancia_actual = gananciaTupla(c)
             if ganancia_actual > maximaGanancia:
                 maximaGanancia = ganancia_actual
-                solucionMaxima = C
+                solucionMaxima = c
 
     return solucionMaxima, maximaGanancia
 
-# Ejemplo de uso
-n = 4  # Número de elementos
-k = [2, 2, 2, 1]  # Pesos de los elementos
-v = [2, 2, 3, 2]  # Valores de los elementos
-
-solucion, max_ganancia = encontrarMejorSolucion(n, k, v)
+solucion, max_ganancia = encuentraMejorSolucion()
 print("Mejor solución:", solucion)
-print("Es factible:", solucion)
+print("Es factible:", esFactibleTupla(solucion))
 print("Máxima ganancia:", max_ganancia)
